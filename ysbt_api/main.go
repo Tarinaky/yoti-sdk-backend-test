@@ -3,10 +3,10 @@ package main
 import (
 		"fmt"
 		"log"
-		//"net/http"
+		"net/http"
 		"database/sql"
 		_ "github.com/lib/pq"
-		//"github.com/gorilla/mux"
+		//"io/ioutil"
 )
 
 const (
@@ -22,10 +22,46 @@ type Env struct {
 		db *sql.DB
 }
 
-func (env* Env) PostRoomba (response http.ResponseWriter, request *http.Request) {
+func (env* Env) PostRoomba (response http.ResponseWriter, request *http.Request) {/*
 		// Parse input
+		body,err := ioutil.ReadAll(request.Body)
+		if err != nil {
+				log.Panic(err)
+		}
+
+		var room Room
+		if err := json.Unmarshal(body, &room); err != nil {
+				log.Panic(err)
+		}
+
 		// Do roomba calculation
+		for _,instruction := range room.Instructions {
+			if err := room.Roomba.Move(instruction, room); err != nil {
+				log.Panic(err)
+			}
+		}
+
 		// Update db
+		transaction, err := env.db.Begin()
+		if err != nil {
+			log.Panic(err)
+		}
+		if _,err := env.db.Exec(
+			`INSERT INTO roomba.rooms (
+				room_width,
+				room_height
+			) VALUES (
+				$1,
+				$2
+			)`,
+			room.Width,
+			room.Height,
+		); err != nil {
+			log.Panic(err)
+		}*/
+
+
+
 		// Write response
 }
 
