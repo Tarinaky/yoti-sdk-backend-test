@@ -9,7 +9,7 @@ start: build
 	docker stack deploy -c ysbt-compose.yml ysbt
 
 stop:
-	docker service rm ysbt_db
-	docker service rm ysbt_api
-	docker stack down ysbt
+	-docker service rm ysbt_db
+	-docker service rm ysbt_api
+	-docker stack down ysbt
 
