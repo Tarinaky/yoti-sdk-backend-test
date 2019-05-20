@@ -29,6 +29,7 @@ type Room struct {
 	Width uint
 	Height uint
 	DirtPatches map[dirt]bool
+	UncollectedDirt map[dirt]bool
 	Instructions string
 	Roomba roomba
 }
@@ -65,6 +66,7 @@ func (this *roomba) Move (instruction rune, maxX, maxY uint) error {
 
 func (room *Room) UnmarshalJSON(b []byte) error {
 	room.DirtPatches = make(map[dirt]bool)
+	room.UncollectedDirt = make(map[dirt]bool)
 	var data input
 	if err := json.Unmarshal(b, &data); err != nil {
 		return err
@@ -75,6 +77,7 @@ func (room *Room) UnmarshalJSON(b []byte) error {
 
 	for _,xy := range data.Patches {
 		room.DirtPatches[dirt{xy[0],xy[1]}] = true
+		room.UncollectedDirt[dirt{xy[0],xy[1]}] = true
 	}
 	room.Instructions = data.Instructions
 
@@ -85,8 +88,9 @@ func (room *Room) UnmarshalJSON(b []byte) error {
 }
 
 func (this *Room) checkVacuum() {
-	if this.DirtPatches[dirt{this.Roomba.CurrentX, this.Roomba.CurrentY}] == true {
+	if this.UncollectedDirt[dirt{this.Roomba.CurrentX, this.Roomba.CurrentY}] == true {
 		this.Roomba.DirtCollected += 1
+		this.UncollectedDirt[dirt{this.Roomba.CurrentX, this.Roomba.CurrentY}] = false
 	}
 }
 
@@ -101,4 +105,6 @@ func (this *Room) Process() error {
 	}
 	return nil
 }
+
+
 
