@@ -13,7 +13,7 @@ import (
 
 const (
 		port = "5432"
-		server = "192.168.99.100"
+		server = "db"
 		password = "password"
 		username = "ysbt_db"
 		database = "ysbt_db"
@@ -30,6 +30,13 @@ type output struct {
 }
 
 func (env* Env) PostRoomba (response http.ResponseWriter, request *http.Request) {
+		if request.Method != "POST" {
+			response.Header().Set("Content-Type", "text/plain")
+			response.WriteHeader(http.StatusBadRequest)
+			response.Write([]byte("400 - This API serves POST only"))
+			return
+		}
+
 		// Parse input
 		body,err := ioutil.ReadAll(request.Body)
 		if err != nil {
@@ -38,17 +45,29 @@ func (env* Env) PostRoomba (response http.ResponseWriter, request *http.Request)
 
 		var room roomba.Room
 		if err := json.Unmarshal(body, &room); err != nil {
-				log.Panic(err)
+			response.Header().Set("Content-Type", "text/plain")
+			response.WriteHeader(http.StatusBadRequest)
+			response.Write([]byte("400 - Could not parse JSON"))
+			log.Print(err)
+			return
 		}
 
 		// Do roomba calculation
 		if err := room.Process(); err != nil {
-			log.Panic(err)
+			response.Header().Set("Content-Type", "text/plain")
+			response.WriteHeader(http.StatusInternalServerError)
+			response.Write([]byte("500 - Internal Server Error"))
+			log.Print(err)
+			return
 		}
 
 		// Update db
 		if err := room.Store(env.db); err != nil {
-			log.Panic(err)
+			response.Header().Set("Content-Type", "text/plain")
+			response.WriteHeader(http.StatusInternalServerError)
+			response.Write([]byte("500 - Internal Server Error"))
+			log.Print(err)
+			return
 		}
 
 		// Write response
