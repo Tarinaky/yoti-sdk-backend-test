@@ -5,7 +5,7 @@ services:
                 volumes: 
                         - /var/lib/postgresql/data
                 ports:
-                        - "5432:5332"
+                        - "5432:5432"
                 restart: always
         api:
                 image: ysbt_api:latest
