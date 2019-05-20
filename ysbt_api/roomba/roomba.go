@@ -84,19 +84,20 @@ func (room *Room) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (this *Room) Process() error {
-	// Check if starting on dirt
-	if this.DirtPatches[dirt{this.Roomba.CurrentX,this.Roomba.CurrentY}] == true {
+func (this *Room) checkVacuum() {
+	if this.DirtPatches[dirt{this.Roomba.CurrentX, this.Roomba.CurrentY}] == true {
 		this.Roomba.DirtCollected += 1
 	}
+}
+
+func (this *Room) Process() error {
+	this.checkVacuum() // Check once at start
 
 	for _,instruction := range this.Instructions {
 		if err := this.Roomba.Move(instruction, this.Width, this.Height); err != nil {
 			return err
 		}
-		if this.DirtPatches[dirt{this.Roomba.CurrentX,this.Roomba.CurrentY}] == true {
-			this.Roomba.DirtCollected += 1
-		}
+		this.checkVacuum()
 	}
 	return nil
 }
