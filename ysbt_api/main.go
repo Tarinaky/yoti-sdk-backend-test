@@ -47,6 +47,8 @@ func main() {
 		env.db = db
 
 		http.HandleFunc("/roomba", env.PostRoomba)
+
+		log.Print("Starting HTTP server")
 		log.Fatal(http.ListenAndServe(":8080",nil))
 }
 

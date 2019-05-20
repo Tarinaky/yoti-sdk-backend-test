@@ -1,5 +1,14 @@
-Yoti SDK Back-end test
+Yoti SDK Back-end test (Solution)
 ======================
+
+## How to run
+These instructions assume you have an initialised docker swarm, and are on that swarm's manager:
+
+    make
+
+The service is serving the /roomba resource, but only responds to POST requests on port 8080.
+
+The database can be reached on port 5432, the username is `ysbt_db`, the password is `password`
 
 ## Introduction
 You will write a service that navigates a imaginary robotic hoover (much like a Roomba) through an equally imaginary room based on:
